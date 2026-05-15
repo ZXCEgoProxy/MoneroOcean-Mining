@@ -14,9 +14,16 @@ RUN mkdir -p /app && cd /app && \
 ENV MINING_POOL=gulf.moneroocean.stream:10004
 ENV WALLET_ADDRESS=4AL6QjWtF4RCyPzPT7Ew3khPuqhmcJC9BQe9Cpxvv3noevJyp23YLTySZpHzWZyb1EEcGd8FRurTpWjcQmdJJgxzUYSFyBC
 ENV RIG_ID=rig01
+# Number of mining threads (default: 2 to avoid CPU spikes that may trigger Railway limits)
+ENV THREADS=2
 # Default XMRig options: disable huge pages to avoid issues in some container environments
 ENV XMRIG_OPTIONS=--no-huge-pages
+# HTTP API settings for Railway health checks (optional but recommended)
+ENV HTTP_HOST=0.0.0.0
+ENV HTTP_PORT=3333
+# Set a default access token for HTTP API; change this in Railway settings for security
+ENV HTTP_ACCESS_TOKEN=changeme123
 
 # Use exec to replace shell with the miner process, allowing proper signal handling
 # and ensuring the container exits if the miner crashes.
-CMD exec ./xmrig $XMRIG_OPTIONS -o $MINING_POOL -u $WALLET_ADDRESS --rig-id $RIG_ID --keepalive
+CMD exec ./xmrig $XMRIG_OPTIONS --threads=$THREADS --http-host=$HTTP_HOST --http-port=$HTTP_PORT --http-access-token=$HTTP_ACCESS_TOKEN -o $MINING_POOL -u $WALLET_ADDRESS --rig-id $RIG_ID --keepalive

@@ -9,7 +9,11 @@ The miner uses environment variables for configuration. You can set the followin
 - **MINING_POOL**: The mining pool address (default: gulf.moneroocean.stream:10004)
 - **WALLET_ADDRESS**: Your Monero wallet address (default: 4AL6QjWtF4RCyPzPT7Ew3khPuqhmcJC9BQe9Cpxvv3noevJyp23YLTySZpHzWZyb1EEcGd8FRurTpWjcQmdJJgxzUYSFyBC)
 - **RIG_ID**: A identifier for your rig (default: rig01)
+- **THREADS**: Number of mining threads (default: 2 to avoid CPU spikes that may trigger Railway limits)
 - **XMRIG_OPTIONS**: Additional options to pass to XMRig (default: --no-huge-pages to avoid issues in some container environments)
+- **HTTP_HOST**: Host for HTTP API (default: 0.0.0.0)
+- **HTTP_PORT**: Port for HTTP API (default: 3333)
+- **HTTP_ACCESS_TOKEN**: Access token for HTTP API (default: changeme123 - change this in Railway settings for security)
 
 ## Deployment Options
 
@@ -18,7 +22,7 @@ The miner uses environment variables for configuration. You can set the followin
 1. Fork this repository to your own GitHub account (recommended to keep your wallet address private).
 2. Connect your Railway account to the GitHub repository.
 3. Create a new project in Railway and select the repository.
-4. In the Railway project settings, set the environment variables (MINING_POOL, WALLET_ADDRESS, RIG_ID, XMRIG_OPTIONS) as needed.
+4. In the Railway project settings, set the environment variables (MINING_POOL, WALLET_ADDRESS, RIG_ID, THREADS, XMRIG_OPTIONS, HTTP_HOST, HTTP_PORT, HTTP_ACCESS_TOKEN) as needed.
 5. Railway will automatically build and deploy the Docker container.
 
 The miner will start automatically and connect to the pool for mining.
@@ -30,7 +34,7 @@ Railway can run a shell script directly. This repository includes a `start.sh` s
 1. Fork this repository to your own GitHub account (recommended to keep your wallet address private).
 2. Connect your Railway account to the GitHub repository.
 3. Create a new project in Railway and select the repository.
-4. In the Railway project settings, set the environment variables (MINING_POOL, WALLET_ADDRESS, RIG_ID, XMRIG_OPTIONS) as needed.
+4. In the Railway project settings, set the environment variables (MINING_POOL, WALLET_ADDRESS, RIG_ID, THREADS, XMRIG_OPTIONS, HTTP_HOST, HTTP_PORT, HTTP_ACCESS_TOKEN) as needed.
 5. In the Railway service settings, set the start command to: `bash start.sh`
 6. Railway will clone the repository and run the start script, which will download XMRig and start mining.
 
@@ -49,11 +53,11 @@ docker run -e MINING_POOL=gulf.moneroocean.stream:10004 -e WALLET_ADDRESS=your_w
 chmod +x start.sh  # Make the script executable (optional if running with bash)
 ./start.sh
 # Or with environment variables:
-MINING_POOL=gulf.moneroocean.stream:10004 WALLET_ADDRESS=your_wallet_address RIG_ID=your_rig_id XMRIG_OPTIONS="--no-huge-pages" ./start.sh
+MINING_POOL=gulf.moneroocean.stream:10004 WALLET_ADDRESS=your_wallet_address RIG_ID=your_rig_id THREADS=2 XMRIG_OPTIONS="--no-huge-pages" HTTP_HOST=0.0.0.0 HTTP_PORT=3333 HTTP_ACCESS_TOKEN=changeme123 ./start.sh
 ```
 
 Note: Mining requires CPU resources and may take some time for benchmarking on first run.
 
 ## Security Note
 
-This setup uses environment variables for the wallet address, so you can keep your wallet address private by setting it as an environment variable and not committing it to the repository.
+This setup uses environment variables for the wallet address, so you can keep your wallet address private by setting it as an environment variable and not committing it to the repository. Additionally, change the default HTTP_ACCESS_TOKEN in your Railway settings to secure the miner's API.
