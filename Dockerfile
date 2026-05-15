@@ -14,5 +14,9 @@ RUN mkdir -p /app && cd /app && \
 ENV MINING_POOL=gulf.moneroocean.stream:10004
 ENV WALLET_ADDRESS=4AL6QjWtF4RCyPzPT7Ew3khPuqhmcJC9BQe9Cpxvv3noevJyp23YLTySZpHzWZyb1EEcGd8FRurTpWjcQmdJJgxzUYSFyBC
 ENV RIG_ID=rig01
+# Default XMRig options: disable huge pages to avoid issues in some container environments
+ENV XMRIG_OPTIONS=--no-huge-pages
 
-CMD ./xmrig -o $MINING_POOL -u $WALLET_ADDRESS --rig-id $RIG_ID --keepalive
+# Use exec to replace shell with the miner process, allowing proper signal handling
+# and ensuring the container exits if the miner crashes.
+CMD exec ./xmrig $XMRIG_OPTIONS -o $MINING_POOL -u $WALLET_ADDRESS --rig-id $RIG_ID --keepalive
